@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class SocialNetUI extends JFrame {
     private SocialNetwork socialNetwork;
@@ -30,31 +32,68 @@ public class SocialNetUI extends JFrame {
         mainPanel.setLayout(new BorderLayout());
         setContentPane(mainPanel);
 
+        // ----------------------- Configuración paneles ---------------------------
+        // panel de nav
         JPanel navPanel = new JPanel();
         navPanel.setPreferredSize(new Dimension(getWidth() / 4, getHeight()));
         navPanel.setBackground(Color.decode("#1D1B1E"));
-        navPanel.setLayout(new BorderLayout());
+        navPanel.setLayout(new BoxLayout(navPanel, BoxLayout.Y_AXIS));
 
         JPanel navContainer = new JPanel();
         navContainer.setOpaque(false);
         navContainer.setLayout(new BoxLayout(navContainer, BoxLayout.Y_AXIS));
+        navContainer.setBorder(BorderFactory.createEmptyBorder(getHeight() / 8, getWidth() / 15, 0, 0));
 
-        JPanel navContainerWrapper = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        navContainerWrapper.setOpaque(false);
-        navContainerWrapper.add(navContainer);
-        navPanel.add(navContainerWrapper, BorderLayout.CENTER);
+        navPanel.add(navContainer);
+        mainPanel.add(navPanel, BorderLayout.WEST);
+
+        JPanel messagePanel = new JPanel();
+        messagePanel.setBackground(Color.BLACK);
+        messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
+
+        JLabel messageLabel = new JLabel("");
+        messageLabel.setForeground(Color.WHITE);
+        messageLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        messagePanel.add(messageLabel);
 
         String[] options = {"Home", "Explore", "Notifications", "Messages", "Display", "Settings", "..."};
         for (String option : options) {
             JLabel optionLabel = new JLabel(option);
             optionLabel.setForeground(Color.WHITE);
-            optionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            optionLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
             optionLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+            optionLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    messageLabel.setText(option + " no tiene ninguna funcionalidad asignada.");
+                }
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    optionLabel.setFont(new Font("Arial", Font.PLAIN, 22)); // Aumentar tamaño
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    optionLabel.setFont(new Font("Arial", Font.PLAIN, 20)); // Restaurar tamaño
+                }
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    optionLabel.setForeground(Color.decode("#944FFE")); // Cambiar color al pasar el mouse
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    optionLabel.setForeground(Color.WHITE); // Restaurar color al salir el mouse
+                }
+            });
             navContainer.add(Box.createRigidArea(new Dimension(0, 25)));
             navContainer.add(optionLabel);
         }
         mainPanel.add(navPanel, BorderLayout.WEST);
+        navPanel.add(Box.createVerticalGlue()); // Empujar el messagePanel al fondo
+        navPanel.add(messagePanel);
 
+        // header
         JPanel header = new JPanel();
         header.setPreferredSize(new Dimension(getWidth(), getHeight() / 8));
         header.setBackground(Color.decode("#8d0aff"));
@@ -91,6 +130,7 @@ public class SocialNetUI extends JFrame {
         }
         header.add(optionsPanel, BorderLayout.EAST);
 
+        // panel de lista
         usersList = new JList<>();
         profilePic = new JLabel();
         friendsList = new JList<>();
