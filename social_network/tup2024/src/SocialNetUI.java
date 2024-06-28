@@ -69,7 +69,7 @@ public class SocialNetUI extends JFrame {
                 }
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    optionLabel.setFont(new Font("Arial", Font.PLAIN, 22)); // Aumentar tamaño
+                    optionLabel.setFont(new Font("Arial", Font.PLAIN, 19)); // Aumentar tamaño
                 }
 
                 @Override
