@@ -1,6 +1,7 @@
 import java.util.List;
 
 public class Usuario {
+    private static int counter = 0;
     private int id;
     private String nombre;
     private List<Usuario> friends;
