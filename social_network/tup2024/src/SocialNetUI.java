@@ -37,14 +37,14 @@ public class SocialNetUI extends JFrame {
         // ----------------------- Configuración paneles ---------------------------
         // panel de nav
         JPanel navPanel = new JPanel();
-        navPanel.setPreferredSize(new Dimension(getWidth() / 4, getHeight()));
+        navPanel.setPreferredSize(new Dimension(getWidth() / 5, getHeight()));
         navPanel.setBackground(Color.decode("#1D1B1E"));
         navPanel.setLayout(new BoxLayout(navPanel, BoxLayout.Y_AXIS));
 
         JPanel navContainer = new JPanel();
         navContainer.setOpaque(false);
         navContainer.setLayout(new BoxLayout(navContainer, BoxLayout.Y_AXIS));
-        navContainer.setBorder(BorderFactory.createEmptyBorder(getHeight() / 8, getWidth() / 15, 0, 0));
+        navContainer.setBorder(BorderFactory.createEmptyBorder(getHeight() / 10, 60, 0, 0));
 
         navPanel.add(navContainer);
         mainPanel.add(navPanel, BorderLayout.WEST);
@@ -98,10 +98,9 @@ public class SocialNetUI extends JFrame {
         navPanel.add(messagePanel);
 
         // header
-        JPanel header = new JPanel();
+        JPanel header = new JPanel(new BorderLayout());
         header.setPreferredSize(new Dimension(getWidth(), getHeight() / 8));
         header.setBackground(Color.decode("#8d0aff"));
-        mainPanel.add(header, BorderLayout.NORTH);
 
         JPanel searchPanel = new JPanel();
         searchPanel.setLayout(new FlowLayout());
@@ -111,28 +110,35 @@ public class SocialNetUI extends JFrame {
         JPanel logoPanel = new JPanel();
         logoPanel.setOpaque(false);
         logoPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        logoPanel.setBorder(BorderFactory.createEmptyBorder(getHeight() / 18, 55, 0, 0));
         header.add(logoPanel, BorderLayout.WEST);
 
         JLabel logoLabel = new JLabel("Label");
         logoLabel.setForeground(Color.WHITE);
-        logoLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        logoLabel.setFont(new Font("Arial", Font.BOLD, 38));
         logoLabel.setHorizontalAlignment(SwingConstants.LEFT);
         logoPanel.add(logoLabel);
 
         JPanel optionsPanel = new JPanel();
         optionsPanel.setOpaque(false);
-        optionsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 5));
-
+        optionsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 35, 5));
+        optionsPanel.setBorder(BorderFactory.createEmptyBorder(getHeight() / 18, 0, 0, 20));
         String[] iconPaths = {
-                "/images/home-icon.png",
-                "/images/profile-icon.png"
+                "images/home-icon.png",
+                "images/profile-icon.png",
+                "images/notification-icon.png",
+                "images/search-icon.png"
         };
         for (String iconPath : iconPaths) {
-            ImageIcon icon = new ImageIcon(iconPath);
+            ImageIcon icon = new ImageIcon(Main.class.getResource(iconPath));
+            Image image = icon.getImage();
+            Image newimg = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);
+            icon = new ImageIcon(newimg);
             JLabel iconLabel = new JLabel(icon);
             optionsPanel.add(iconLabel);
         }
         header.add(optionsPanel, BorderLayout.EAST);
+        mainPanel.add(header, BorderLayout.NORTH);
 
         // panel de lista de amigos
         JPanel friendsPanel = new JPanel();
@@ -179,9 +185,5 @@ public class SocialNetUI extends JFrame {
         searchPanel.add(sendBtn);
 
         setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(SocialNetUI::new);
     }
 }
