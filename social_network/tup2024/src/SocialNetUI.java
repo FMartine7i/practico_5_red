@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SocialNetUI extends JFrame {
     private SocialNetwork socialNetwork;
@@ -17,7 +19,7 @@ public class SocialNetUI extends JFrame {
     }
 
     public void createUIComponents() {
-        setTitle("Label");
+        setTitle("Red Social");
         setSize(1200, 900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -67,6 +69,7 @@ public class SocialNetUI extends JFrame {
                 public void mouseClicked(MouseEvent e) {
                     messageLabel.setText(option + " no tiene ninguna funcionalidad asignada.");
                 }
+
                 @Override
                 public void mousePressed(MouseEvent e) {
                     optionLabel.setFont(new Font("Arial", Font.PLAIN, 19)); // Aumentar tamaño
@@ -76,6 +79,7 @@ public class SocialNetUI extends JFrame {
                 public void mouseReleased(MouseEvent e) {
                     optionLabel.setFont(new Font("Arial", Font.PLAIN, 20)); // Restaurar tamaño
                 }
+
                 @Override
                 public void mouseEntered(MouseEvent e) {
                     optionLabel.setForeground(Color.decode("#944FFE")); // Cambiar color al pasar el mouse
@@ -122,7 +126,7 @@ public class SocialNetUI extends JFrame {
         String[] iconPaths = {
                 "/images/home-icon.png",
                 "/images/profile-icon.png"
-            };
+        };
         for (String iconPath : iconPaths) {
             ImageIcon icon = new ImageIcon(iconPath);
             JLabel iconLabel = new JLabel(icon);
@@ -130,7 +134,42 @@ public class SocialNetUI extends JFrame {
         }
         header.add(optionsPanel, BorderLayout.EAST);
 
-        // panel de lista
+        // panel de lista de amigos
+        JPanel friendsPanel = new JPanel();
+        friendsPanel.setLayout(new BorderLayout());
+        friendsPanel.setBackground(Color.decode("#252426"));
+
+        JLabel friendsLabel = new JLabel("Friends Online");
+        friendsLabel.setForeground(Color.WHITE);
+        friendsLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        friendsLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        friendsPanel.add(friendsLabel, BorderLayout.NORTH);
+
+        JPanel friendsListPanel = new JPanel();
+        friendsListPanel.setLayout(new GridLayout(5, 2, 10, 10));
+        friendsListPanel.setBackground(Color.decode("#252426"));
+
+        // Aquí cargamos las imágenes de perfil y los nombres de los amigos
+        List<Usuario> friends = new ArrayList<>(); 
+        ImageIcon profileIcon = new ImageIcon(new ImageIcon("practico_5_red\\social_network\\tup2024\\src\\images\\profile-icon.png").getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
+
+        for (int i = 0; i < 10; i++) {
+            JPanel friendPanel = new JPanel();
+            friendPanel.setBackground(Color.decode("#252426"));
+            friendPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+            JLabel profilePic = new JLabel(profileIcon);
+            JLabel friendName = new JLabel("Friend " + (i + 1)); // Aquí debes obtener el nombre real del amigo
+            friendName.setForeground(Color.WHITE);
+
+            friendPanel.add(profilePic);
+            friendPanel.add(friendName);
+            friendsListPanel.add(friendPanel);
+        }
+
+        friendsPanel.add(friendsListPanel, BorderLayout.CENTER);
+        mainPanel.add(friendsPanel, BorderLayout.CENTER);
+
         usersList = new JList<>();
         profilePic = new JLabel();
         friendsList = new JList<>();
@@ -140,5 +179,9 @@ public class SocialNetUI extends JFrame {
         searchPanel.add(sendBtn);
 
         setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(SocialNetUI::new);
     }
 }
