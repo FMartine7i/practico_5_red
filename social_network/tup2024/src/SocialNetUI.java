@@ -146,12 +146,12 @@ public class SocialNetUI extends JFrame {
         JPanel logoPanel = new JPanel();
         logoPanel.setOpaque(false);
         logoPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        logoPanel.setBorder(BorderFactory.createEmptyBorder(getHeight() / 18, 55, 0, 0));
+        logoPanel.setBorder(BorderFactory.createEmptyBorder(getHeight() / 18, 45, 0, 0));
         header.add(logoPanel, BorderLayout.WEST);
 
-        JLabel logoLabel = new JLabel("Label");
+        JLabel logoLabel = new JLabel("Red Social");
         logoLabel.setForeground(Color.WHITE);
-        logoLabel.setFont(new Font("Arial", Font.BOLD, 38));
+        logoLabel.setFont(new Font("Arial", Font.BOLD, 32));
         logoLabel.setHorizontalAlignment(SwingConstants.LEFT);
         logoPanel.add(logoLabel);
 
