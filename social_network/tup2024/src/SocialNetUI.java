@@ -8,6 +8,7 @@ import java.util.List;
 public class SocialNetUI extends JFrame {
     private SocialNetwork socialNetwork;
     private JPanel mainPanel;
+    private JTextField searchTextField;
     private JList<Usuario> usersList;
     private JLabel profilePic;
     private JList<Usuario> friendsList;
@@ -35,19 +36,12 @@ public class SocialNetUI extends JFrame {
         setContentPane(mainPanel);
 
         // ----------------------- Configuración paneles ---------------------------
+
         // panel de nav
         JPanel navPanel = new JPanel();
         navPanel.setPreferredSize(new Dimension(getWidth() / 5, getHeight()));
         navPanel.setBackground(Color.decode("#1D1B1E"));
         navPanel.setLayout(new BoxLayout(navPanel, BoxLayout.Y_AXIS));
-
-        JPanel navContainer = new JPanel();
-        navContainer.setOpaque(false);
-        navContainer.setLayout(new BoxLayout(navContainer, BoxLayout.Y_AXIS));
-        navContainer.setBorder(BorderFactory.createEmptyBorder(getHeight() / 10, 60, 0, 0));
-
-        navPanel.add(navContainer);
-        mainPanel.add(navPanel, BorderLayout.WEST);
 
         JPanel messagePanel = new JPanel();
         messagePanel.setBackground(Color.BLACK);
@@ -58,46 +52,88 @@ public class SocialNetUI extends JFrame {
         messageLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         messagePanel.add(messageLabel);
 
-        String[] options = {"Home", "Explore", "Notifications", "Messages", "Display", "Settings", "..."};
-        for (String option : options) {
+        // ----------------------- Opciones del navPanel ---------------------------
+
+        mainPanel.add(navPanel, BorderLayout.WEST); // Agregar navPanel directamente al mainPanel
+
+        String[] options = {"Home", "Explore", "Notifications", "Messages", "Display", "Settings", "More"};
+        ImageIcon[] icons = {
+                new ImageIcon(Main.class.getResource("images/home-icon.png")),
+                new ImageIcon(Main.class.getResource("images/search-icon.png")),
+                new ImageIcon(Main.class.getResource("images/notification-icon.png")),
+                new ImageIcon(Main.class.getResource("images/message-icon.png")),
+                new ImageIcon(Main.class.getResource("images/display-icon.png")),
+                new ImageIcon(Main.class.getResource("images/settings-icon.png")),
+                new ImageIcon(Main.class.getResource("images/more-icon.png"))
+        };
+
+        // Escalado de iconos
+        for (int i = 0; i < icons.length; i++) {
+            ImageIcon icon = icons[i];
+            Image image = icon.getImage();
+            Image newimg = image.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
+            icons[i] = new ImageIcon(newimg);
+        }
+
+        // Crear las opciones con iconos
+        for (int i = 0; i < options.length; i++) {
+            String option = options[i];
+            ImageIcon icon = icons[i];
+
+            JPanel optionPanel = new JPanel(new BorderLayout());
+            optionPanel.setOpaque(true);
+            optionPanel.setBackground(Color.decode("#1D1B1E"));
+            optionPanel.setBorder(BorderFactory.createEmptyBorder(10, 50, 0, 0)); // Margen
+
+            JPanel contentPanel = new JPanel();
+            contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.LINE_AXIS));
+            contentPanel.setOpaque(false);
+
+            JLabel iconLabel = new JLabel(icon);
             JLabel optionLabel = new JLabel(option);
+
+            iconLabel.setAlignmentY(Component.CENTER_ALIGNMENT); // Alinea verticalmente el icono al centro
+            optionLabel.setAlignmentY(Component.CENTER_ALIGNMENT); // Alinea verticalmente el texto al centro
+
+            contentPanel.add(iconLabel);
+            contentPanel.add(Box.createRigidArea(new Dimension(10, 0))); // Espacio entre el ícono y el texto
+            contentPanel.add(optionLabel);
+
             optionLabel.setForeground(Color.WHITE);
-            optionLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-            optionLabel.setFont(new Font("Arial", Font.PLAIN, 20));
-            optionLabel.addMouseListener(new MouseAdapter() {
+            optionLabel.setFont(new Font("Arial", Font.PLAIN, 18));
+
+            optionPanel.add(contentPanel, BorderLayout.CENTER); // Agregar contentPanel al centro del optionPanel
+
+            optionPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    messageLabel.setText(option + " no tiene ninguna funcionalidad asignada.");
+                    System.out.println(option + " no tiene ninguna funcionalidad asignada.");
                 }
-
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    optionLabel.setFont(new Font("Arial", Font.PLAIN, 19)); // Aumentar tamaño
+                    optionLabel.setFont(new Font("Arial", Font.PLAIN, 17)); // Disminuir tamaño
                 }
-
                 @Override
                 public void mouseReleased(MouseEvent e) {
-                    optionLabel.setFont(new Font("Arial", Font.PLAIN, 20)); // Restaurar tamaño
+                    optionLabel.setFont(new Font("Arial", Font.PLAIN, 18)); // Restaurar tamaño
                 }
-
                 @Override
                 public void mouseEntered(MouseEvent e) {
-                    optionLabel.setForeground(Color.decode("#944FFE")); // Cambiar color al pasar el mouse
+                    optionPanel.setBackground(Color.decode("#433D45"));
                 }
-
                 @Override
                 public void mouseExited(MouseEvent e) {
-                    optionLabel.setForeground(Color.WHITE); // Restaurar color al salir el mouse
+                    optionLabel.setForeground(Color.WHITE);
+                    optionPanel.setBackground(Color.decode("#1D1B1E"));
                 }
             });
-            navContainer.add(Box.createRigidArea(new Dimension(0, 25)));
-            navContainer.add(optionLabel);
+            navPanel.add(optionPanel); // Agregar optionPanel directamente a navPanel
         }
-        mainPanel.add(navPanel, BorderLayout.WEST);
+
         navPanel.add(Box.createVerticalGlue()); // Empujar el messagePanel al fondo
         navPanel.add(messagePanel);
 
-        // header
+        // --------------------------- header ----------------------------
         JPanel header = new JPanel(new BorderLayout());
         header.setPreferredSize(new Dimension(getWidth(), getHeight() / 8));
         header.setBackground(Color.decode("#8d0aff"));
@@ -121,7 +157,7 @@ public class SocialNetUI extends JFrame {
 
         JPanel optionsPanel = new JPanel();
         optionsPanel.setOpaque(false);
-        optionsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 35, 5));
+        optionsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 35, 4));
         optionsPanel.setBorder(BorderFactory.createEmptyBorder(getHeight() / 18, 0, 0, 20));
         String[] iconPaths = {
                 "images/home-icon.png",
@@ -140,35 +176,70 @@ public class SocialNetUI extends JFrame {
         header.add(optionsPanel, BorderLayout.EAST);
         mainPanel.add(header, BorderLayout.NORTH);
 
-        // panel de lista de amigos
+
+        // ---------------------- panel de lista de amigos ------------------------
+
         JPanel friendsPanel = new JPanel();
         friendsPanel.setLayout(new BorderLayout());
+        friendsPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 0, 0));
         friendsPanel.setBackground(Color.decode("#252426"));
 
         JLabel friendsLabel = new JLabel("Friends Online");
         friendsLabel.setForeground(Color.WHITE);
         friendsLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        friendsLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        friendsLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
         friendsPanel.add(friendsLabel, BorderLayout.NORTH);
 
         JPanel friendsListPanel = new JPanel();
-        friendsListPanel.setLayout(new GridLayout(5, 2, 10, 10));
+        friendsListPanel.setLayout(new GridLayout(5, 2, 10, 5));
         friendsListPanel.setBackground(Color.decode("#252426"));
 
-        // Aquí cargamos las imágenes de perfil y los nombres de los amigos
-        List<Usuario> friends = new ArrayList<>(); 
-        ImageIcon profileIcon = new ImageIcon(new ImageIcon("practico_5_red\\social_network\\tup2024\\src\\images\\profile-icon.png").getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
+        // Cargar el icono de la foto de perfil y ajustar tamaño
+        ImageIcon profileIcon = new ImageIcon("social_network/tup2024/src/images/profile-icon.png");
+        Image image = profileIcon.getImage();
+        Image newimg = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+        profileIcon = new ImageIcon(newimg);
 
-        for (int i = 0; i < 10; i++) {
+        // Ejemplo de creación de amigos (simulación)
+        Usuario usuario1 = new Usuario("Gianluca");
+        Usuario usuario2 = new Usuario("Federico");
+        Usuario usuario3 = new Usuario("Sergio");
+        Usuario usuario4 = new Usuario("Mila");
+        Usuario usuario5 = new Usuario("Aldi");
+        Usuario usuario6 = new Usuario("Jessi");
+
+        usuario1.addFriend(usuario2);
+        usuario1.addFriend(usuario3);
+        usuario2.addFriend(usuario4);
+        usuario5.addFriend(usuario6);
+
+        List<Usuario> amigosSimulados = new ArrayList<>();
+        amigosSimulados.add(usuario1);
+        amigosSimulados.add(usuario2);
+        amigosSimulados.add(usuario3);
+        amigosSimulados.add(usuario4);
+        amigosSimulados.add(usuario5);
+        amigosSimulados.add(usuario6);
+
+        for (Usuario amigo : amigosSimulados) {
             JPanel friendPanel = new JPanel();
             friendPanel.setBackground(Color.decode("#252426"));
             friendPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-            JLabel profilePic = new JLabel(profileIcon);
-            JLabel friendName = new JLabel("Friend " + (i + 1)); // Aquí debes obtener el nombre real del amigo
+            JLabel profilePicLabel = new JLabel(profileIcon);
+            JLabel friendName = new JLabel(amigo.getNombre());
+            friendName.setFont(new Font("Arial", Font.PLAIN, 16));
             friendName.setForeground(Color.WHITE);
 
-            friendPanel.add(profilePic);
+            profilePicLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    mostrarListaDeAmigos(amigo);
+                }
+            });
+
+            friendPanel.add(profilePicLabel);
+            friendPanel.add(Box.createRigidArea(new Dimension(10, 0)));
             friendPanel.add(friendName);
             friendsListPanel.add(friendPanel);
         }
@@ -176,13 +247,99 @@ public class SocialNetUI extends JFrame {
         friendsPanel.add(friendsListPanel, BorderLayout.CENTER);
         mainPanel.add(friendsPanel, BorderLayout.CENTER);
 
-        usersList = new JList<>();
-        profilePic = new JLabel();
-        friendsList = new JList<>();
-        searchField = new JTextField();
+        // Añadir el cuadro de búsqueda
+        JPanel searchFriendsPanel = new JPanel();
+        searchFriendsPanel.setBackground(Color.decode("#252426"));
+        searchFriendsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
-        sendBtn = new RoundedBtn("Enviar");
-        searchPanel.add(sendBtn);
+        JLabel searchLabel = new JLabel("Buscar amigo:");
+        searchLabel.setForeground(Color.WHITE);
+        searchLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        searchFriendsPanel.add(searchLabel);
+
+        searchTextField = new JTextField(20);
+        searchFriendsPanel.add(searchTextField);
+
+        RoundedBtn searchButton = new RoundedBtn("Buscar");
+        searchButton.addActionListener(e -> buscarAmigo(usuario1)); // Usar usuario1 como ejemplo
+        searchFriendsPanel.add(searchButton);
+
+        mainPanel.add(searchFriendsPanel, BorderLayout.SOUTH);
+
+        setVisible(true);
+    }
+
+    private void mostrarListaDeAmigos(Usuario usuario) {
+        // Panel para mostrar la lista de amigos
+        JPanel panel = new JPanel(new BorderLayout());
+
+        // Construir la lista de amigos
+        StringBuilder sb = new StringBuilder();
+        sb.append("<html>");
+        sb.append("<h3>Amigos de ").append(usuario.getNombre()).append("</h3>");
+        sb.append("<ul>");
+        for (Usuario amigo : usuario.getFriends()) {
+            sb.append("<li>").append(amigo.getNombre()).append("</li>");
+        }
+        sb.append("</ul>");
+        sb.append("</html>");
+
+        // Crear el mensaje con la lista de amigos
+        JLabel messageLabel = new JLabel(sb.toString());
+        panel.add(messageLabel, BorderLayout.CENTER);
+
+
+        // Añadir el campo de búsqueda
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel searchLabel = new JLabel("Buscar amigo:");
+        JTextField searchField = new JTextField(15);
+        JButton searchButton = new JButton("Buscar");
+
+        // Acción del botón de búsqueda
+        searchButton.addActionListener(e -> {
+            String nombreBuscar = searchField.getText().trim();
+            boolean encontrado = false;
+            for (Usuario amigo : usuario.getFriends()) {
+                if (amigo.getNombre().equalsIgnoreCase(nombreBuscar)) {
+                    encontrado = true;
+                    break;
+                }
+            }
+            if (encontrado) {
+                JOptionPane.showMessageDialog(this, nombreBuscar + " es amigo de " + usuario.getNombre(),
+                        "Búsqueda de Amigo", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, nombreBuscar + " no es amigo de " + usuario.getNombre(),
+                        "Búsqueda de Amigo", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        searchPanel.add(searchLabel);
+        searchPanel.add(searchField);
+        searchPanel.add(searchButton);
+
+        panel.add(searchPanel, BorderLayout.SOUTH);
+
+        // Mostrar el mensaje completo en un JOptionPane
+        JOptionPane.showMessageDialog(this, panel, "Lista de Amigos", JOptionPane.PLAIN_MESSAGE);
+    }
+
+    private void buscarAmigo(Usuario usuario) {
+        String nombre = searchTextField.getText().trim();
+        boolean encontrado = false;
+        for (Usuario amigo : usuario.getFriends()) {
+            if (amigo.getNombre().equalsIgnoreCase(nombre)) {
+                encontrado = true;
+                break;
+            }
+        }
+        if (encontrado) {
+            JOptionPane.showMessageDialog(this, nombre + " es amigo de " + usuario.getNombre(), "Búsqueda de Amigo",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, nombre + " no es amigo de " + usuario.getNombre(), "Búsqueda de Amigo",
+                    JOptionPane.ERROR_MESSAGE);
+        }
 
         setVisible(true);
     }

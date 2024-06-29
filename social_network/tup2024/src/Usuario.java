@@ -5,9 +5,9 @@ public class Usuario {
     private static int counter = 0;
     private int id;
     private String nombre;
-    private List<Usuario> friends;  
+    private List<Usuario> friends;
 
-    // para que se cree automaticamente el id y las amistades sean bidireccionales
+    // incrementa automaticamente el id y las amistades son bidireccionales
     public Usuario(String nombre) {
         this.id = ++counter;
         this.nombre = nombre;
