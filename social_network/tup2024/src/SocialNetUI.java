@@ -1,6 +1,8 @@
 import components.CustomPanel;
 import components.CustomSearchTextField;
 import components.RoundedBtn;
+import entities.SocialNetwork;
+import entities.Usuario;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,13 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SocialNetUI extends JFrame {
-    private SocialNetwork socialNetwork = new SocialNetwork();
+    private final SocialNetwork socialNetwork = new SocialNetwork();
     private JPanel mainPanel;
-    private JTextField searchTextField;
-    private JList<Usuario> usersList;
-    private JLabel profilePic;
 
     public SocialNetUI() {
+        addSapmleUsers();
         createUIComponents();
     }
 
@@ -35,10 +35,15 @@ public class SocialNetUI extends JFrame {
         };
         mainPanel.setLayout(new BorderLayout());
         setContentPane(mainPanel);
+        setNavPanel();
+        setHeader();
+        setFriendsPanel();
+    }
 
-        // ----------------------- Configuración paneles ---------------------------
+    // ----------------------- Configuración paneles ---------------------------
 
-        // panel de nav
+    // panel de nav
+    public void setNavPanel() {
         JPanel navPanel = new JPanel();
         navPanel.setPreferredSize(new Dimension(getWidth() / 5, getHeight()));
         navPanel.setBackground(Color.decode("#1D1B1E"));
@@ -110,18 +115,22 @@ public class SocialNetUI extends JFrame {
                 public void mouseClicked(MouseEvent e) {
                     System.out.println(option + " no tiene ninguna funcionalidad asignada.");
                 }
+
                 @Override
                 public void mousePressed(MouseEvent e) {
                     optionLabel.setFont(new Font("Arial", Font.PLAIN, 17)); // Disminuir tamaño
                 }
+
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     optionLabel.setFont(new Font("Arial", Font.PLAIN, 18)); // Restaurar tamaño
                 }
+
                 @Override
                 public void mouseEntered(MouseEvent e) {
                     optionPanel.setBackground(Color.decode("#433D45"));
                 }
+
                 @Override
                 public void mouseExited(MouseEvent e) {
                     optionLabel.setForeground(Color.WHITE);
@@ -133,9 +142,31 @@ public class SocialNetUI extends JFrame {
 
         navPanel.add(Box.createVerticalGlue()); // Empujar el messagePanel al fondo
         navPanel.add(messagePanel);
+    }
 
-        // --------------------------- header ----------------------------
-        JPanel header = new JPanel(new BorderLayout());
+    // --------------------------- header ----------------------------
+
+    public void setHeader() {
+        JPanel header = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+
+                int w = getWidth();
+                int h = getHeight();
+
+                // Definir colores para el gradiente
+                Color color1 = Color.decode("#8d0aff");
+                Color color2 = Color.decode("#451489");
+
+                // Crear gradiente lineal de arriba hacia abajo
+                GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
+
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, w, h);
+            }
+        };
         header.setPreferredSize(new Dimension(getWidth(), getHeight() / 8));
         header.setBackground(Color.decode("#8d0aff"));
 
@@ -176,10 +207,11 @@ public class SocialNetUI extends JFrame {
         }
         header.add(optionsPanel, BorderLayout.EAST);
         mainPanel.add(header, BorderLayout.NORTH);
+    }
 
+    // ---------------------- panel de lista de amigos ------------------------
 
-        // ---------------------- panel de lista de amigos ------------------------
-
+    public void setFriendsPanel() {
         JPanel friendsPanel = new JPanel();
         friendsPanel.setLayout(new BorderLayout());
         friendsPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 0, 0));
@@ -201,37 +233,8 @@ public class SocialNetUI extends JFrame {
         Image newimg = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
         profileIcon = new ImageIcon(newimg);
 
-        // Ejemplo de creación de amigos (simulación)
-        Usuario usuario1 = new Usuario("Gianluca");
-        Usuario usuario2 = new Usuario("Mila");
-        Usuario usuario3 = new Usuario("Sergio");
-        Usuario usuario4 = new Usuario("Aldi");
-        Usuario usuario5 = new Usuario("Fede");
-        Usuario usuario6 = new Usuario("Jessi");
 
-        usuario1.addFriend(usuario2);
-        usuario1.addFriend(usuario3);
-        usuario2.addFriend(usuario3);
-        usuario4.addFriend(usuario6);
-        usuario5.addFriend(usuario2);
-        usuario5.addFriend(usuario6);
-
-        List<Usuario> amigosSimulados = new ArrayList<>();
-        amigosSimulados.add(usuario1);
-        amigosSimulados.add(usuario2);
-        amigosSimulados.add(usuario3);
-        amigosSimulados.add(usuario4);
-        amigosSimulados.add(usuario5);
-        amigosSimulados.add(usuario6);
-
-        // Agregar usuarios a la red social
-        socialNetwork.addUser(usuario1);
-        socialNetwork.addUser(usuario2);
-        socialNetwork.addUser(usuario3);
-        socialNetwork.addUser(usuario4);
-        socialNetwork.addUser(usuario5);
-        socialNetwork.addUser(usuario6);
-
+        List<Usuario> amigosSimulados = socialNetwork.getAllUsers();
         for (Usuario amigo : amigosSimulados) {
             JPanel friendPanel = new JPanel();
             friendPanel.setBackground(Color.decode("#252426"));
@@ -256,27 +259,6 @@ public class SocialNetUI extends JFrame {
         }
         friendsPanel.add(friendsListPanel, BorderLayout.CENTER);
         mainPanel.add(friendsPanel, BorderLayout.CENTER);
-
-        // Añadir el cuadro de búsqueda
-        JPanel searchFriendsPanel = new JPanel();
-        searchFriendsPanel.setBackground(Color.decode("#141315"));
-        searchFriendsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
-
-        JLabel searchLabel = new JLabel("Buscar amigo:");
-        searchLabel.setForeground(Color.WHITE);
-        searchLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        searchFriendsPanel.add(searchLabel);
-
-        searchTextField = new CustomSearchTextField(20);
-        searchTextField.setBackground(Color.MAGENTA);
-        searchFriendsPanel.add(searchTextField);
-
-        RoundedBtn searchButton = new RoundedBtn("Buscar");
-        searchButton.addActionListener(e -> buscarAmigo(usuario1)); // Usar usuario1 como ejemplo
-        searchFriendsPanel.add(searchButton);
-
-        mainPanel.add(searchFriendsPanel, BorderLayout.SOUTH);
-
         setVisible(true);
     }
 
@@ -310,31 +292,8 @@ public class SocialNetUI extends JFrame {
         CustomSearchTextField searchField = new CustomSearchTextField(15);
         searchField.setForeground(Color.WHITE);
         searchLabel.setForeground(Color.WHITE);
-        RoundedBtn searchButton = new RoundedBtn("Buscar");
+        JButton searchButton = createSearchButton(searchField, usuario);
 
-        // Acción del botón de búsqueda
-        searchButton.addActionListener(e -> {
-            String nombreBuscar = searchField.getText().trim();
-            Usuario amigoBuscado = null;
-
-            // busca al usuario en toda la red social
-            for (Usuario user : socialNetwork.getAllUsers()) {
-                if (user.getNombre().equalsIgnoreCase(nombreBuscar)) {
-                    amigoBuscado = user;
-                    break;
-                }
-            }
-
-            if (amigoBuscado != null) {
-                if (usuario.getFriends().contains(amigoBuscado))
-                    showCustomMessageDialog(this, nombreBuscar + " es amigo/a de " + usuario.getNombre(), "Búsqueda de Amigo", JOptionPane.INFORMATION_MESSAGE);
-                else {
-                    String msg = socialNetwork.shortestPathToStr(usuario.getId(), amigoBuscado.getId());
-                    showCustomMessageDialog(this, msg, "Búsqueda de Amigo", JOptionPane.PLAIN_MESSAGE);
-                }
-            }
-            else showCustomMessageDialog(this, "No se encontró a " + nombreBuscar, "Búsqueda de Amigo", JOptionPane.ERROR_MESSAGE);
-        });
         searchPanel.add(searchLabel);
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
@@ -346,34 +305,74 @@ public class SocialNetUI extends JFrame {
         JOptionPane.showMessageDialog(this, panel, "Lista de Amigos", JOptionPane.PLAIN_MESSAGE);
     }
 
-    private void buscarAmigo(Usuario usuario) {
-        String nombre = searchTextField.getText().trim();
-        Usuario amigoBuscado = null;
-
-        // buscar amigo en toda la red social
-        for (Usuario amigo : socialNetwork.getAllUsers()) {
-            if (amigo.getNombre().equalsIgnoreCase(nombre)) {
-                amigoBuscado = amigo;
-                break;
-            }
-        }
-        if (amigoBuscado != null) {
-            UIManager.put("OptionPane.foreground", Color.WHITE);
-            JOptionPane.showMessageDialog(this, nombre + " es amigo de " + usuario.getNombre(), "Búsqueda de Amigo",
-                    JOptionPane.INFORMATION_MESSAGE);
-        }
-        else {
-            UIManager.put("OptionPane.foreground", Color.WHITE);
-            JOptionPane.showMessageDialog(this, "", "Búsqueda de Amigo",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        setVisible(true);
-    }
-
     // método para cambiar color del mensaje del JOptionPane
     public void showCustomMessageDialog(Component parentComponent, Object message, String title, int messageType) {
         UIManager.put("OptionPane.messageForeground", Color.WHITE);
         JOptionPane.showMessageDialog(parentComponent, message, title, messageType);
         UIManager.put("OptionPane.messageForeground", UIManager.getColor("OptionPane.messageForeground"));
+    }
+
+    // creación de amigos (simulación)
+    public void addSapmleUsers() {
+        Usuario usuario1 = new Usuario("Gianluca");
+        Usuario usuario2 = new Usuario("Mila");
+        Usuario usuario3 = new Usuario("Sergio");
+        Usuario usuario4 = new Usuario("Aldi");
+        Usuario usuario5 = new Usuario("Fede");
+        Usuario usuario6 = new Usuario("Jessi");
+
+        usuario1.addFriend(usuario2);
+        usuario1.addFriend(usuario3);
+        usuario2.addFriend(usuario3);
+        usuario4.addFriend(usuario6);
+        usuario5.addFriend(usuario2);
+        usuario5.addFriend(usuario6);
+
+        List<Usuario> amigosSimulados = new ArrayList<>();
+        amigosSimulados.add(usuario1);
+        amigosSimulados.add(usuario2);
+        amigosSimulados.add(usuario3);
+        amigosSimulados.add(usuario4);
+        amigosSimulados.add(usuario5);
+        amigosSimulados.add(usuario6);
+
+        // Agregar usuarios a la red social
+        socialNetwork.addUser(usuario1);
+        socialNetwork.addUser(usuario2);
+        socialNetwork.addUser(usuario3);
+        socialNetwork.addUser(usuario4);
+        socialNetwork.addUser(usuario5);
+        socialNetwork.addUser(usuario6);
+    }
+
+    // método creación del JButton con su acción correspondiente -> buscar amigos del usuario
+    private JButton createSearchButton(JTextField searchField, Usuario usuario) {
+        RoundedBtn searchButton = new RoundedBtn("Buscar");
+
+        searchButton.addActionListener(e -> {
+            String nombreBuscar = searchField.getText().trim();
+            Usuario amigoBuscado = null;
+            // busca al usuario en toda la red social
+            for (Usuario user : socialNetwork.getAllUsers()) {
+                if (user.getNombre().equalsIgnoreCase(nombreBuscar)) {
+                    amigoBuscado = user;
+                    break;
+                }
+            }
+
+            if (searchField.getText().trim().isEmpty()) showCustomMessageDialog(this, "No se ha ingresado ningún nombre", "Búsqueda de amigo", JOptionPane.ERROR_MESSAGE);
+            else {
+            if (amigoBuscado != null) {
+                if (usuario.getFriends().contains(amigoBuscado))
+                    showCustomMessageDialog(this, nombreBuscar + " es amigo/a de " + usuario.getNombre(), "Búsqueda de Amigo", JOptionPane.PLAIN_MESSAGE);
+                else {
+                    String msg = socialNetwork.shortestPathToStr(usuario.getId(), amigoBuscado.getId());
+                    showCustomMessageDialog(this, msg, "Búsqueda de amigo", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+            else showCustomMessageDialog(this, "No se encontró a " + nombreBuscar, "Búsqueda de amigo", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        return searchButton;
     }
 }
