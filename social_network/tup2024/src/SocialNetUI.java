@@ -224,6 +224,14 @@ public class SocialNetUI extends JFrame {
         amigosSimulados.add(usuario5);
         amigosSimulados.add(usuario6);
 
+        // Agregar usuarios a la red social
+        socialNetwork.addUser(usuario1);
+        socialNetwork.addUser(usuario2);
+        socialNetwork.addUser(usuario3);
+        socialNetwork.addUser(usuario4);
+        socialNetwork.addUser(usuario5);
+        socialNetwork.addUser(usuario6);
+
         for (Usuario amigo : amigosSimulados) {
             JPanel friendPanel = new JPanel();
             friendPanel.setBackground(Color.decode("#252426"));
@@ -308,32 +316,24 @@ public class SocialNetUI extends JFrame {
         searchButton.addActionListener(e -> {
             String nombreBuscar = searchField.getText().trim();
             Usuario amigoBuscado = null;
-            boolean encontrado = false;
-            for (Usuario amigo : usuario.getFriends()) {
-                if (amigo.getNombre().equalsIgnoreCase(nombreBuscar)) {
-                    amigoBuscado = amigo;
-                    encontrado = true;
+
+            // busca al usuario en toda la red social
+            for (Usuario user : socialNetwork.getAllUsers()) {
+                if (user.getNombre().equalsIgnoreCase(nombreBuscar)) {
+                    amigoBuscado = user;
                     break;
                 }
             }
-            // Si no se encuentra en la lista de amigos, buscar en toda la red social
-            if (amigoBuscado == null) {
-                for (Usuario user : socialNetwork.getAllUsers()) {
-                    if (user.getNombre().equalsIgnoreCase(nombreBuscar)) {
-                        amigoBuscado = user;
-                        break;
-                    }
+
+            if (amigoBuscado != null) {
+                if (usuario.getFriends().contains(amigoBuscado))
+                    showCustomMessageDialog(this, nombreBuscar + " es amigo/a de " + usuario.getNombre(), "Búsqueda de Amigo", JOptionPane.INFORMATION_MESSAGE);
+                else {
+                    String msg = socialNetwork.shortestPathToStr(usuario.getId(), amigoBuscado.getId());
+                    showCustomMessageDialog(this, msg, "Búsqueda de Amigo", JOptionPane.PLAIN_MESSAGE);
                 }
             }
-            if (amigoBuscado != null && usuario.getFriends().contains(amigoBuscado))
-                showCustomMessageDialog(this, nombreBuscar + " es amigo/a de " + usuario.getNombre(),
-                        "Búsqueda de Amigo", JOptionPane.INFORMATION_MESSAGE);
-            else if (amigoBuscado != null) {
-                String msg = socialNetwork.shortestPathToStr(usuario.getId(), amigoBuscado.getId());
-                showCustomMessageDialog(this, msg,  "Búsqueda de Amigo", JOptionPane.ERROR_MESSAGE);
-            }
-            else
-                showCustomMessageDialog(this, "No se encontró a " + nombreBuscar, "Búsqueda de Amigo", JOptionPane.ERROR_MESSAGE);
+            else showCustomMessageDialog(this, "No se encontró a " + nombreBuscar, "Búsqueda de Amigo", JOptionPane.ERROR_MESSAGE);
         });
         searchPanel.add(searchLabel);
         searchPanel.add(searchField);
@@ -348,14 +348,16 @@ public class SocialNetUI extends JFrame {
 
     private void buscarAmigo(Usuario usuario) {
         String nombre = searchTextField.getText().trim();
-        boolean encontrado = false;
-        for (Usuario amigo : usuario.getFriends()) {
+        Usuario amigoBuscado = null;
+
+        // buscar amigo en toda la red social
+        for (Usuario amigo : socialNetwork.getAllUsers()) {
             if (amigo.getNombre().equalsIgnoreCase(nombre)) {
-                encontrado = true;
+                amigoBuscado = amigo;
                 break;
             }
         }
-        if (encontrado) {
+        if (amigoBuscado != null) {
             UIManager.put("OptionPane.foreground", Color.WHITE);
             JOptionPane.showMessageDialog(this, nombre + " es amigo de " + usuario.getNombre(), "Búsqueda de Amigo",
                     JOptionPane.INFORMATION_MESSAGE);
