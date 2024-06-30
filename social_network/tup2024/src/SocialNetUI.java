@@ -255,7 +255,7 @@ public class SocialNetUI extends JFrame {
             friendName.setFont(new Font("Arial", Font.PLAIN, 16));
             friendName.setForeground(Color.WHITE);
 
-            profilePicLabel.addMouseListener(new MouseAdapter() {
+            friendPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     mostrarListaDeAmigos(amigo);
