@@ -63,6 +63,16 @@ public class SocialNetUI extends JFrame {
         mainPanel.add(navPanel, BorderLayout.WEST); // Agregar navPanel directamente al mainPanel
 
         String[] options = {"Home", "Explore", "Notifications", "Messages", "Display", "Settings", "More"};
+        // Mensajes específicos para cada opción
+        String[] messages = {
+                "Usted se encuentra en Home.",
+                "Explorar lista de amigos.",
+                "No tienes ninguna notificación nueva.",
+                "No tienes ningún mensaje.",
+                "Configuración de pantalla.",
+                "Ajustes del sistema.",
+                "Más opciones disponibles."
+        };
         ImageIcon[] icons = {
                 new ImageIcon(Main.class.getResource("images/home-icon.png")),
                 new ImageIcon(Main.class.getResource("images/search-icon.png")),
@@ -85,6 +95,7 @@ public class SocialNetUI extends JFrame {
         for (int i = 0; i < options.length; i++) {
             String option = options[i];
             ImageIcon icon = icons[i];
+            String message = messages[i];
 
             JPanel optionPanel = new JPanel(new BorderLayout());
             optionPanel.setOpaque(true);
@@ -113,24 +124,23 @@ public class SocialNetUI extends JFrame {
             optionPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    System.out.println(option + " no tiene ninguna funcionalidad asignada.");
+                    UIManager.put("OptionPane.messageForeground", Color.WHITE);
+                    UIManager.put("OptionPane.background", Color.decode("#403C43"));
+                    UIManager.put("Panel.background", Color.decode("#403C43"));
+                    JOptionPane.showMessageDialog(null, message);
                 }
-
                 @Override
                 public void mousePressed(MouseEvent e) {
                     optionLabel.setFont(new Font("Arial", Font.PLAIN, 17)); // Disminuir tamaño
                 }
-
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     optionLabel.setFont(new Font("Arial", Font.PLAIN, 18)); // Restaurar tamaño
                 }
-
                 @Override
                 public void mouseEntered(MouseEvent e) {
                     optionPanel.setBackground(Color.decode("#433D45"));
                 }
-
                 @Override
                 public void mouseExited(MouseEvent e) {
                     optionLabel.setForeground(Color.WHITE);
@@ -348,29 +358,32 @@ public class SocialNetUI extends JFrame {
     // método creación del JButton con su acción correspondiente -> buscar amigos del usuario
     private JButton createSearchButton(JTextField searchField, Usuario usuario) {
         RoundedBtn searchButton = new RoundedBtn("Buscar");
-
+        String title = "Búsqueda de amigo";
         searchButton.addActionListener(e -> {
-            String nombreBuscar = searchField.getText().trim();
+            String nombre = searchField.getText().trim();
             Usuario amigoBuscado = null;
             // busca al usuario en toda la red social
             for (Usuario user : socialNetwork.getAllUsers()) {
-                if (user.getNombre().equalsIgnoreCase(nombreBuscar)) {
+                if (user.getNombre().equalsIgnoreCase(nombre)) {
                     amigoBuscado = user;
                     break;
                 }
             }
 
-            if (searchField.getText().trim().isEmpty()) showCustomMessageDialog(this, "No se ha ingresado ningún nombre", "Búsqueda de amigo", JOptionPane.ERROR_MESSAGE);
+            if (searchField.getText().trim().isEmpty())
+                showCustomMessageDialog(this, "No se ha ingresado ningún nombre", title, JOptionPane.ERROR_MESSAGE);
+            else if (nombre.equalsIgnoreCase(usuario.getNombre()))
+                showCustomMessageDialog(this, "No puedes ser tu propio amigo", title, JOptionPane.ERROR_MESSAGE);
             else {
             if (amigoBuscado != null) {
                 if (usuario.getFriends().contains(amigoBuscado))
-                    showCustomMessageDialog(this, nombreBuscar + " es amigo/a de " + usuario.getNombre(), "Búsqueda de Amigo", JOptionPane.PLAIN_MESSAGE);
+                    showCustomMessageDialog(this, nombre + " es amigo/a de " + usuario.getNombre(), title, JOptionPane.PLAIN_MESSAGE);
                 else {
                     String msg = socialNetwork.shortestPathToStr(usuario.getId(), amigoBuscado.getId());
                     showCustomMessageDialog(this, msg, "Búsqueda de amigo", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
-            else showCustomMessageDialog(this, "No se encontró a " + nombreBuscar, "Búsqueda de amigo", JOptionPane.ERROR_MESSAGE);
+            else showCustomMessageDialog(this, "No se encontró a " + nombre, title, JOptionPane.ERROR_MESSAGE);
             }
         });
         return searchButton;
