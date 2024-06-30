@@ -16,7 +16,7 @@ public class SocialNetUI extends JFrame {
     private JPanel mainPanel;
 
     public SocialNetUI() {
-        addSapmleUsers();
+        addSampleUsers();
         createUIComponents();
     }
 
@@ -87,8 +87,8 @@ public class SocialNetUI extends JFrame {
         for (int i = 0; i < icons.length; i++) {
             ImageIcon icon = icons[i];
             Image image = icon.getImage();
-            Image newimg = image.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
-            icons[i] = new ImageIcon(newimg);
+            Image newImg = image.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
+            icons[i] = new ImageIcon(newImg);
         }
 
         // Crear las opciones con iconos
@@ -210,8 +210,8 @@ public class SocialNetUI extends JFrame {
         for (String iconPath : iconPaths) {
             ImageIcon icon = new ImageIcon(Main.class.getResource(iconPath));
             Image image = icon.getImage();
-            Image newimg = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);
-            icon = new ImageIcon(newimg);
+            Image newImg = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);
+            icon = new ImageIcon(newImg);
             JLabel iconLabel = new JLabel(icon);
             optionsPanel.add(iconLabel);
         }
@@ -240,8 +240,8 @@ public class SocialNetUI extends JFrame {
         // Cargar el icono de la foto de perfil y ajustar tamaño
         ImageIcon profileIcon = new ImageIcon("social_network/tup2024/src/images/profile-icon.png");
         Image image = profileIcon.getImage();
-        Image newimg = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-        profileIcon = new ImageIcon(newimg);
+        Image newImg = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+        profileIcon = new ImageIcon(newImg);
 
 
         List<Usuario> amigosSimulados = socialNetwork.getAllUsers();
@@ -310,7 +310,7 @@ public class SocialNetUI extends JFrame {
         panel.add(searchPanel, BorderLayout.SOUTH);
 
         // Mostrar el mensaje completo en un JOptionPane
-        UIManager.put("OptionPane.background", Color.decode("#403C43"));    // personaliza el fondo del JoptionPane
+        UIManager.put("OptionPane.background", Color.decode("#403C43"));    // personaliza el fondo del JOptionPane
         UIManager.put("Panel.background", Color.decode("#403C43"));
         JOptionPane.showMessageDialog(this, panel, "Lista de Amigos", JOptionPane.PLAIN_MESSAGE);
     }
@@ -323,7 +323,7 @@ public class SocialNetUI extends JFrame {
     }
 
     // creación de amigos (simulación)
-    public void addSapmleUsers() {
+    public void addSampleUsers() {
         Usuario usuario1 = new Usuario("Gianluca");
         Usuario usuario2 = new Usuario("Mila");
         Usuario usuario3 = new Usuario("Sergio");
@@ -355,7 +355,7 @@ public class SocialNetUI extends JFrame {
         socialNetwork.addUser(usuario6);
     }
 
-    // método creación del JButton con su acción correspondiente -> buscar amigos del usuario
+    // método creación del JButton con su acción correspondiente → buscar amigos del usuario
     private JButton createSearchButton(JTextField searchField, Usuario usuario) {
         RoundedBtn searchButton = new RoundedBtn("Buscar");
         String title = "Búsqueda de amigo";
