@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SocialNetUI extends JFrame {
+    private SocialNetwork socialNetwork = new SocialNetwork();
     private JPanel mainPanel;
     private JTextField searchTextField;
     private JList<Usuario> usersList;
@@ -210,10 +211,10 @@ public class SocialNetUI extends JFrame {
 
         usuario1.addFriend(usuario2);
         usuario1.addFriend(usuario3);
-        usuario1.addFriend(usuario5);
         usuario2.addFriend(usuario3);
         usuario4.addFriend(usuario6);
         usuario5.addFriend(usuario2);
+        usuario5.addFriend(usuario6);
 
         List<Usuario> amigosSimulados = new ArrayList<>();
         amigosSimulados.add(usuario1);
@@ -245,7 +246,6 @@ public class SocialNetUI extends JFrame {
             friendPanel.add(friendName);
             friendsListPanel.add(friendPanel);
         }
-
         friendsPanel.add(friendsListPanel, BorderLayout.CENTER);
         mainPanel.add(friendsPanel, BorderLayout.CENTER);
 
@@ -307,24 +307,37 @@ public class SocialNetUI extends JFrame {
         // Acción del botón de búsqueda
         searchButton.addActionListener(e -> {
             String nombreBuscar = searchField.getText().trim();
+            Usuario amigoBuscado = null;
             boolean encontrado = false;
             for (Usuario amigo : usuario.getFriends()) {
                 if (amigo.getNombre().equalsIgnoreCase(nombreBuscar)) {
+                    amigoBuscado = amigo;
                     encontrado = true;
                     break;
                 }
             }
-            if (encontrado)
-                JOptionPane.showMessageDialog(this, nombreBuscar + " es amigo de " + usuario.getNombre(),
+            // Si no se encuentra en la lista de amigos, buscar en toda la red social
+            if (amigoBuscado == null) {
+                for (Usuario user : socialNetwork.getAllUsers()) {
+                    if (user.getNombre().equalsIgnoreCase(nombreBuscar)) {
+                        amigoBuscado = user;
+                        break;
+                    }
+                }
+            }
+            if (amigoBuscado != null && usuario.getFriends().contains(amigoBuscado))
+                showCustomMessageDialog(this, nombreBuscar + " es amigo/a de " + usuario.getNombre(),
                         "Búsqueda de Amigo", JOptionPane.INFORMATION_MESSAGE);
+            else if (amigoBuscado != null) {
+                String msg = socialNetwork.shortestPathToStr(usuario.getId(), amigoBuscado.getId());
+                showCustomMessageDialog(this, msg,  "Búsqueda de Amigo", JOptionPane.ERROR_MESSAGE);
+            }
             else
-                JOptionPane.showMessageDialog(this, nombreBuscar + " no es amigo de " + usuario.getNombre(),
-                        "Búsqueda de Amigo", JOptionPane.ERROR_MESSAGE);
+                showCustomMessageDialog(this, "No se encontró a " + nombreBuscar, "Búsqueda de Amigo", JOptionPane.ERROR_MESSAGE);
         });
         searchPanel.add(searchLabel);
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
-
         panel.add(searchPanel, BorderLayout.SOUTH);
 
         // Mostrar el mensaje completo en un JOptionPane
@@ -349,9 +362,16 @@ public class SocialNetUI extends JFrame {
         }
         else {
             UIManager.put("OptionPane.foreground", Color.WHITE);
-            JOptionPane.showMessageDialog(this, nombre + " no es amigo de " + usuario.getNombre(), "Búsqueda de Amigo",
+            JOptionPane.showMessageDialog(this, "", "Búsqueda de Amigo",
                     JOptionPane.ERROR_MESSAGE);
         }
         setVisible(true);
+    }
+
+    // método para cambiar color del mensaje del JOptionPane
+    public void showCustomMessageDialog(Component parentComponent, Object message, String title, int messageType) {
+        UIManager.put("OptionPane.messageForeground", Color.WHITE);
+        JOptionPane.showMessageDialog(parentComponent, message, title, messageType);
+        UIManager.put("OptionPane.messageForeground", UIManager.getColor("OptionPane.messageForeground"));
     }
 }

@@ -17,6 +17,10 @@ public class SocialNetwork {
         return null;
     }
 
+    public List<Usuario> getAllUsers() {
+        return usuarios;
+    }
+
     public List<Usuario> bfs(int id) {
         Usuario inicio = getUserById(id);
         if (inicio == null)
@@ -108,15 +112,21 @@ public class SocialNetwork {
         for (Usuario at = end; at != null; at = previous.get(at)) {
             path.add(0, at);
         }
-        if (path.get(0).equals(start))
-            return path;
+        if (path.get(0).equals(start)) return path;
         return null;
     }
 
     public String shortestPathToStr(int startId, int endId) {
         List<Usuario> path = findShortestPath(startId, endId);
-        if (path == null) return getUserById(startId).getNombre() + " y " + getUserById(endId).getNombre() + " no son amigos y no hay ruta para conectar";
-        else if (path.size() == 2) return getUserById(startId).getNombre() + " y " + getUserById(endId).getNombre() + " no son amigos, pero tiene un amigo en común: " + path.get(1).getNombre();
-        else return "";
+        if (path == null) return getUserById(startId).getNombre() + " y " + getUserById(endId).getNombre() + " no son amigos y no hay ruta para conectar.";
+        else if (path.size() == 2) return getUserById(startId).getNombre() + " y " + getUserById(endId).getNombre() + " no son amigos, pero tienen un amigo en común: " + path.get(1).getNombre();
+        else {
+            StringBuilder msg = new StringBuilder();
+            for (Usuario usuario : path) {
+                msg.append(usuario.getNombre()).append(" -> ");
+            }
+            msg.setLength(msg.length() - 4); // Eliminar el último " -> "
+            return getUserById(startId).getNombre() + " y " + getUserById(endId).getNombre() + " no son amigos, pero la ruta más cercana para conocerse es: " + msg.toString();
+        }
     }
 }
