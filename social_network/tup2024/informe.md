@@ -43,8 +43,7 @@ Esta clase representa a un usuario en la red social. Contiene atributos como nom
 
 **SocialNetUI.java:**
 Esta clase maneja la interfaz de usuario de la red social. Utiliza los componentes personalizados definidos en la carpeta
-Components para crear una interfaz gráfica interactiva. Permite a los usuarios, al hacer click sobre las imágenes de perfil
-de cada persona, visualizar perfiles, listas de amigos y buscar otros usuarios.
+Components para crear una interfaz gráfica interactiva. Permite a los usuarios visualizar perfiles, listas de amigos y buscar otros usuarios.
 
 ### Funcionamiento del Programa
 **Representación de Usuarios y Relaciones:**
